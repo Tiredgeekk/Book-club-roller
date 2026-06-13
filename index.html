@@ -1,118 +1,372 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Book Club Picker</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 700px;
-            margin: 30px auto;
-            padding: 20px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        button {
-            margin: 5px;
-            padding: 8px 12px;
-        }
+<title>Literature Club Book Picker</title>
 
-        input {
-            padding: 8px;
-            width: 300px;
-        }
+<style>
+:root {
+    --burgundy: #6D1F2F;
+    --cream: #F8F4EC;
+    --card: #FFFDF8;
+    --border: #D8CFC3;
+    --text: #2B2B2B;
+}
 
-        li {
-            margin: 5px 0;
-        }
+body {
+    font-family: "Times New Roman", serif;
+    background: var(--cream);
+    color: var(--text);
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+}
 
-        .rolled-book {
-            font-size: 20px;
-            margin: 10px 0;
-            font-weight: bold;
-        }
-    </style>
+header {
+    text-align: center;
+}
+
+h1 {
+    color: var(--burgundy);
+    margin-bottom: 5px;
+}
+
+.quote {
+    font-style: italic;
+    color: #555;
+}
+
+.book-of-month {
+    background: linear-gradient(to bottom, #fffdf8, #f3ecdf);
+    border: 2px solid var(--burgundy);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.book-of-month h2 {
+    color: var(--burgundy);
+    margin-top: 0;
+}
+
+.section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.section h2 {
+    color: var(--burgundy);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+
+input {
+    width: 70%;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+button {
+    background: var(--burgundy);
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    margin: 4px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.book-card {
+    background: white;
+    border-left: 5px solid var(--burgundy);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+.small-btn {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+}
+
+.stats {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.empty {
+    color: #666;
+    font-style: italic;
+}
+</style>
 </head>
+
 <body>
 
+<header>
     <h1>Literature Club Book Picker</h1>
 
-    <input id="bookInput" placeholder="Enter a book title">
+    <p class="quote">
+        "A room without books is like a body without a soul."
+    </p>
+
+    <div class="stats">
+        <div>📚 Available Books: <span id="bookCount">0</span></div>
+        <div>🏆 Previous Winners: <span id="winnerCount">0</span></div>
+    </div>
+</header>
+
+<div class="book-of-month" id="bookOfMonth">
+    <h2>📖 Book of the Month 📖</h2>
+    <p>No winner selected yet.</p>
+</div>
+
+<div class="section">
+    <h2>Add a Book</h2>
+
+    <input
+        id="bookInput"
+        type="text"
+        placeholder="Enter a book title..."
+    >
+
     <button onclick="addBook()">Add Book</button>
+</div>
 
-    <hr>
+<div class="section">
+    <h2>Vote Candidates</h2>
 
-    <button onclick="rollBooks()">Roll 3 Books for Vote</button>
+    <button onclick="rollBooks()">
+        Roll 3 Books
+    </button>
 
-    <h2>Vote Choices</h2>
-    <div id="rolledBooks"></div>
+    <div id="rolledBooks" class="empty">
+        No books rolled yet.
+    </div>
+</div>
 
-    <hr>
+<div class="section">
+    <h2>Current Book Pool</h2>
 
-    <h2>Book Pool</h2>
-    <ul id="bookList"></ul>
+    <div id="bookPool"></div>
+</div>
 
-    <script>
-        let books = JSON.parse(localStorage.getItem("books")) || [];
+<div class="section">
+    <h2>Previous Winners Archive</h2>
 
-        function saveBooks() {
-            localStorage.setItem("books", JSON.stringify(books));
-        }
+    <div id="winnerList"></div>
+</div>
 
-        function renderBooks() {
-            const list = document.getElementById("bookList");
-            list.innerHTML = "";
+<script>
 
-            books.forEach((book, index) => {
-                const li = document.createElement("li");
+let books =
+    JSON.parse(localStorage.getItem("books")) || [];
 
-                li.innerHTML = `
-                    ${book}
-                    <button onclick="removeBook(${index})">
-                        Remove
-                    </button>
-                `;
+let winners =
+    JSON.parse(localStorage.getItem("winners")) || [];
 
-                list.appendChild(li);
-            });
-        }
+let bookOfMonth =
+    JSON.parse(localStorage.getItem("bookOfMonth")) || null;
 
-        function addBook() {
-            const input = document.getElementById("bookInput");
-            const title = input.value.trim();
+function saveData() {
+    localStorage.setItem("books", JSON.stringify(books));
+    localStorage.setItem("winners", JSON.stringify(winners));
+    localStorage.setItem("bookOfMonth", JSON.stringify(bookOfMonth));
+}
 
-            if (!title) return;
+function updateCounts() {
+    document.getElementById("bookCount").textContent =
+        books.length;
 
-            books.push(title);
-            saveBooks();
-            renderBooks();
+    document.getElementById("winnerCount").textContent =
+        winners.length;
+}
 
-            input.value = "";
-        }
+function renderBookOfMonth() {
+    const banner =
+        document.getElementById("bookOfMonth");
 
-        function removeBook(index) {
-            books.splice(index, 1);
-            saveBooks();
-            renderBooks();
-        }
+    if (!bookOfMonth) {
+        banner.innerHTML = `
+            <h2>📖 Book of the Month 📖</h2>
+            <p>No winner selected yet.</p>
+        `;
+        return;
+    }
 
-        function rollBooks() {
-            const results = document.getElementById("rolledBooks");
+    banner.innerHTML = `
+        <h2>📖 Book of the Month 📖</h2>
+        <h3>${bookOfMonth.title}</h3>
+        <p>Selected ${bookOfMonth.date}</p>
+    `;
+}
 
-            if (books.length < 3) {
-                results.innerHTML = "Need at least 3 books.";
-                return;
-            }
+function renderBooks() {
 
-            const shuffled = [...books].sort(() => Math.random() - 0.5);
+    const pool =
+        document.getElementById("bookPool");
 
-            const chosen = shuffled.slice(0, 3);
+    if (books.length === 0) {
 
-            results.innerHTML = chosen
-                .map(book => `<div class="rolled-book">${book}</div>`)
-                .join("");
-        }
+        pool.innerHTML =
+            '<p class="empty">No books available.</p>';
 
-        renderBooks();
-    </script>
+        return;
+    }
+
+    pool.innerHTML = books.map((book, index) => `
+        <div class="book-card">
+            <strong>${book}</strong><br>
+
+            <button
+                class="small-btn"
+                onclick="removeBook(${index})">
+                Remove
+            </button>
+        </div>
+    `).join("");
+
+    updateCounts();
+}
+
+function renderWinners() {
+
+    const list =
+        document.getElementById("winnerList");
+
+    if (winners.length === 0) {
+
+        list.innerHTML =
+            '<p class="empty">No winners yet.</p>';
+
+        return;
+    }
+
+    list.innerHTML = winners
+        .slice()
+        .reverse()
+        .map(entry => `
+            <div class="book-card">
+                🏆 <strong>${entry.title}</strong><br>
+                <em>${entry.date}</em>
+            </div>
+        `).join("");
+}
+
+function addBook() {
+
+    const input =
+        document.getElementById("bookInput");
+
+    const title =
+        input.value.trim();
+
+    if (!title) return;
+
+    books.push(title);
+
+    saveData();
+    renderBooks();
+
+    input.value = "";
+}
+
+function removeBook(index) {
+
+    books.splice(index, 1);
+
+    saveData();
+    renderBooks();
+    updateCounts();
+}
+
+function rollBooks() {
+
+    const container =
+        document.getElementById("rolledBooks");
+
+    if (books.length < 3) {
+
+        container.innerHTML =
+            '<p class="empty">Need at least 3 books.</p>';
+
+        return;
+    }
+
+    const shuffled =
+        [...books].sort(() => Math.random() - 0.5);
+
+    const selected =
+        shuffled.slice(0, 3);
+
+    container.innerHTML = selected.map(book => `
+        <div class="book-card">
+            <strong>${book}</strong><br>
+
+            <button
+                class="small-btn"
+                onclick="markWinner('${book.replace(/'/g, "\\'")}')">
+                Mark as Winner
+            </button>
+        </div>
+    `).join("");
+}
+
+function markWinner(book) {
+
+    books =
+        books.filter(b => b !== book);
+
+    const now =
+        new Date();
+
+    const date =
+        now.toLocaleString('default', {
+            month: 'long',
+            year: 'numeric'
+        });
+
+    const winnerEntry = {
+        title: book,
+        date: date
+    };
+
+    winners.push(winnerEntry);
+
+    bookOfMonth = winnerEntry;
+
+    saveData();
+
+    renderBooks();
+    renderWinners();
+    renderBookOfMonth();
+    updateCounts();
+
+    document.getElementById("rolledBooks").innerHTML =
+        '<p class="empty">Winner selected! See you next month.</p>';
+}
+
+renderBooks();
+renderWinners();
+renderBookOfMonth();
+updateCounts();
+
+</script>
 
 </body>
 </html>
