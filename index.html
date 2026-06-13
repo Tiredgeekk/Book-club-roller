@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Club Picker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 8px 12px;
+        }
+
+        input {
+            padding: 8px;
+            width: 300px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        .rolled-book {
+            font-size: 20px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Literature Club Book Picker</h1>
+
+    <input id="bookInput" placeholder="Enter a book title">
+    <button onclick="addBook()">Add Book</button>
+
+    <hr>
+
+    <button onclick="rollBooks()">Roll 3 Books for Vote</button>
+
+    <h2>Vote Choices</h2>
+    <div id="rolledBooks"></div>
+
+    <hr>
+
+    <h2>Book Pool</h2>
+    <ul id="bookList"></ul>
+
+    <script>
+        let books = JSON.parse(localStorage.getItem("books")) || [];
+
+        function saveBooks() {
+            localStorage.setItem("books", JSON.stringify(books));
+        }
+
+        function renderBooks() {
+            const list = document.getElementById("bookList");
+            list.innerHTML = "";
+
+            books.forEach((book, index) => {
+                const li = document.createElement("li");
+
+                li.innerHTML = `
+                    ${book}
+                    <button onclick="removeBook(${index})">
+                        Remove
+                    </button>
+                `;
+
+                list.appendChild(li);
+            });
+        }
+
+        function addBook() {
+            const input = document.getElementById("bookInput");
+            const title = input.value.trim();
+
+            if (!title) return;
+
+            books.push(title);
+            saveBooks();
+            renderBooks();
+
+            input.value = "";
+        }
+
+        function removeBook(index) {
+            books.splice(index, 1);
+            saveBooks();
+            renderBooks();
+        }
+
+        function rollBooks() {
+            const results = document.getElementById("rolledBooks");
+
+            if (books.length < 3) {
+                results.innerHTML = "Need at least 3 books.";
+                return;
+            }
+
+            const shuffled = [...books].sort(() => Math.random() - 0.5);
+
+            const chosen = shuffled.slice(0, 3);
+
+            results.innerHTML = chosen
+                .map(book => `<div class="rolled-book">${book}</div>`)
+                .join("");
+        }
+
+        renderBooks();
+    </script>
+
+</body>
+</html>
