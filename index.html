@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,42 +10,72 @@
 <style>
 :root {
     --burgundy: #6D1F2F;
+    --dark-burgundy: #541725;
     --cream: #F8F4EC;
     --card: #FFFDF8;
     --border: #D8CFC3;
     --text: #2B2B2B;
+    --soft-burgundy: #F1E3E6;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 body {
     font-family: "Times New Roman", serif;
-    background: var(--cream);
+    background-color: var(--cream);
     color: var(--text);
     max-width: 900px;
     margin: auto;
-    padding: 30px;
+    padding: 30px 20px;
 }
+
+/* HEADER */
 
 header {
     text-align: center;
+    margin-bottom: 25px;
 }
 
 h1 {
     color: var(--burgundy);
+    font-size: 2.6rem;
     margin-bottom: 5px;
 }
 
 .quote {
     font-style: italic;
     color: #555;
+    margin-top: 0;
 }
 
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 18px;
+    font-weight: bold;
+}
+
+/* BOOK OF THE MONTH */
+
 .book-of-month {
-    background: linear-gradient(to bottom, #fffdf8, #f3ecdf);
+    background: linear-gradient(
+        to bottom,
+        #fffdf8,
+        #f1e8da
+    );
+
     border: 2px solid var(--burgundy);
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 14px;
+
+    padding: 25px;
     text-align: center;
-    margin: 25px 0;
+
+    margin-bottom: 25px;
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
 .book-of-month h2 {
@@ -52,66 +83,145 @@ h1 {
     margin-top: 0;
 }
 
+.book-of-month h3 {
+    font-size: 1.7rem;
+    margin: 10px 0 5px;
+}
+
+/* SECTIONS */
+
 .section {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 12px;
+
     padding: 20px;
     margin-bottom: 25px;
 }
 
 .section h2 {
     color: var(--burgundy);
+
     border-bottom: 1px solid var(--border);
+
     padding-bottom: 8px;
 }
 
+/* INPUT */
+
 input {
     width: 70%;
-    padding: 10px;
+
+    padding: 11px;
+
     font-family: inherit;
     font-size: 1rem;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    background: white;
 }
+
+input:focus {
+    outline: 2px solid var(--burgundy);
+}
+
+/* BUTTONS */
 
 button {
     background: var(--burgundy);
     color: white;
+
     border: none;
-    padding: 10px 14px;
     border-radius: 6px;
+
+    padding: 10px 14px;
+
     cursor: pointer;
+
     font-family: inherit;
+    font-size: 1rem;
+
     margin: 4px;
 }
 
 button:hover {
-    opacity: 0.9;
-}
-
-.book-card {
-    background: white;
-    border-left: 5px solid var(--burgundy);
-    padding: 12px;
-    border-radius: 8px;
-    margin: 10px 0;
+    background: var(--dark-burgundy);
 }
 
 .small-btn {
-    padding: 6px 10px;
+    padding: 7px 11px;
     font-size: 0.9rem;
 }
 
-.stats {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin: 15px 0;
-    font-weight: bold;
+/* BOOK CARDS */
+
+.book-card {
+    background: white;
+
+    border-left: 5px solid var(--burgundy);
+
+    padding: 14px;
+
+    border-radius: 8px;
+
+    margin: 10px 0;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
+/* VOTE CANDIDATES */
+
+.candidate-card {
+    background: var(--soft-burgundy);
+
+    border: 1px solid #d9bfc5;
+    border-left: 5px solid var(--burgundy);
+
+    padding: 16px;
+
+    border-radius: 8px;
+
+    margin: 12px 0;
+}
+
+.candidate-card strong {
+    font-size: 1.2rem;
+}
+
+/* EMPTY TEXT */
 
 .empty {
     color: #666;
     font-style: italic;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 20px 12px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .stats {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    input {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    button {
+        width: auto;
+    }
 }
 </style>
 </head>
@@ -119,6 +229,7 @@ button:hover {
 <body>
 
 <header>
+
     <h1>Literature Club Book Picker</h1>
 
     <p class="quote">
@@ -126,17 +237,35 @@ button:hover {
     </p>
 
     <div class="stats">
-        <div>📚 Available Books: <span id="bookCount">0</span></div>
-        <div>🏆 Previous Winners: <span id="winnerCount">0</span></div>
+
+        <div>
+            📚 Available Books:
+            <span id="bookCount">0</span>
+        </div>
+
+        <div>
+            🏆 Previous Winners:
+            <span id="winnerCount">0</span>
+        </div>
+
     </div>
+
 </header>
 
-<div class="book-of-month" id="bookOfMonth">
-    <h2>📖 Book of the Month 📖</h2>
-    <p>No winner selected yet.</p>
+
+<!-- BOOK OF THE MONTH -->
+
+<div
+    class="book-of-month"
+    id="bookOfMonth"
+>
 </div>
 
+
+<!-- ADD BOOK -->
+
 <div class="section">
+
     <h2>Add a Book</h2>
 
     <input
@@ -145,76 +274,171 @@ button:hover {
         placeholder="Enter a book title..."
     >
 
-    <button onclick="addBook()">Add Book</button>
+    <button onclick="addBook()">
+        Add Book
+    </button>
+
 </div>
 
+
+<!-- VOTE CANDIDATES -->
+
 <div class="section">
+
     <h2>Vote Candidates</h2>
 
     <button onclick="rollBooks()">
-        Roll 3 Books
+        🎲 Roll 3 Books
     </button>
 
-    <div id="rolledBooks" class="empty">
-        No books rolled yet.
+    <div id="rolledBooks">
     </div>
+
 </div>
 
+
+<!-- BOOK POOL -->
+
 <div class="section">
+
     <h2>Current Book Pool</h2>
 
-    <div id="bookPool"></div>
+    <div id="bookPool">
+    </div>
+
 </div>
+
+
+<!-- WINNERS -->
 
 <div class="section">
+
     <h2>Previous Winners Archive</h2>
 
-    <div id="winnerList"></div>
+    <div id="winnerList">
+    </div>
+
 </div>
+
 
 <script>
 
+/*
+==================================================
+DATA
+==================================================
+*/
+
+// Main pool of books
 let books =
     JSON.parse(localStorage.getItem("books")) || [];
 
+// Books that have previously won
 let winners =
     JSON.parse(localStorage.getItem("winners")) || [];
 
+// Current three vote candidates
+let voteCandidates =
+    JSON.parse(localStorage.getItem("voteCandidates")) || [];
+
+// Current Book of the Month
 let bookOfMonth =
     JSON.parse(localStorage.getItem("bookOfMonth")) || null;
 
+
+/*
+==================================================
+SAVE EVERYTHING
+==================================================
+*/
+
 function saveData() {
-    localStorage.setItem("books", JSON.stringify(books));
-    localStorage.setItem("winners", JSON.stringify(winners));
-    localStorage.setItem("bookOfMonth", JSON.stringify(bookOfMonth));
+
+    localStorage.setItem(
+        "books",
+        JSON.stringify(books)
+    );
+
+    localStorage.setItem(
+        "winners",
+        JSON.stringify(winners)
+    );
+
+    localStorage.setItem(
+        "voteCandidates",
+        JSON.stringify(voteCandidates)
+    );
+
+    localStorage.setItem(
+        "bookOfMonth",
+        JSON.stringify(bookOfMonth)
+    );
 }
+
+
+/*
+==================================================
+COUNTERS
+==================================================
+*/
 
 function updateCounts() {
-    document.getElementById("bookCount").textContent =
-        books.length;
 
-    document.getElementById("winnerCount").textContent =
-        winners.length;
+    document.getElementById(
+        "bookCount"
+    ).textContent = books.length;
+
+    document.getElementById(
+        "winnerCount"
+    ).textContent = winners.length;
 }
 
+
+/*
+==================================================
+BOOK OF THE MONTH
+==================================================
+*/
+
 function renderBookOfMonth() {
+
     const banner =
         document.getElementById("bookOfMonth");
 
     if (!bookOfMonth) {
+
         banner.innerHTML = `
             <h2>📖 Book of the Month 📖</h2>
-            <p>No winner selected yet.</p>
+
+            <p class="empty">
+                No book has been selected yet.
+            </p>
         `;
+
         return;
     }
 
     banner.innerHTML = `
+
         <h2>📖 Book of the Month 📖</h2>
-        <h3>${bookOfMonth.title}</h3>
-        <p>Selected ${bookOfMonth.date}</p>
+
+        <h3>
+            ${escapeHTML(bookOfMonth.title)}
+        </h3>
+
+        <p>
+            Selected ${escapeHTML(bookOfMonth.date)}
+        </p>
+
     `;
 }
+
+
+/*
+==================================================
+BOOK POOL
+==================================================
+*/
 
 function renderBooks() {
 
@@ -223,26 +447,96 @@ function renderBooks() {
 
     if (books.length === 0) {
 
-        pool.innerHTML =
-            '<p class="empty">No books available.</p>';
+        pool.innerHTML = `
+            <p class="empty">
+                No books currently available.
+            </p>
+        `;
+
+        updateCounts();
 
         return;
     }
 
-    pool.innerHTML = books.map((book, index) => `
+    pool.innerHTML = books.map(
+        (book, index) => `
+
         <div class="book-card">
-            <strong>${book}</strong><br>
+
+            <strong>
+                ${escapeHTML(book)}
+            </strong>
+
+            <br>
 
             <button
                 class="small-btn"
-                onclick="removeBook(${index})">
+                onclick="removeBook(${index})"
+            >
                 Remove
             </button>
+
         </div>
+
     `).join("");
 
     updateCounts();
 }
+
+
+/*
+==================================================
+VOTE CANDIDATES
+==================================================
+*/
+
+function renderVoteCandidates() {
+
+    const container =
+        document.getElementById("rolledBooks");
+
+    // Nothing has been rolled yet
+    if (voteCandidates.length === 0) {
+
+        container.innerHTML = `
+            <p class="empty">
+                No books rolled yet.
+            </p>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        voteCandidates.map(
+            (book, index) => `
+
+        <div class="candidate-card">
+
+            <strong>
+                ${escapeHTML(book)}
+            </strong>
+
+            <br>
+
+            <button
+                class="small-btn"
+                onclick="markWinner(${index})"
+            >
+                🏆 Mark as Winner
+            </button>
+
+        </div>
+
+    `).join("");
+}
+
+
+/*
+==================================================
+PREVIOUS WINNERS
+==================================================
+*/
 
 function renderWinners() {
 
@@ -251,22 +545,51 @@ function renderWinners() {
 
     if (winners.length === 0) {
 
-        list.innerHTML =
-            '<p class="empty">No winners yet.</p>';
+        list.innerHTML = `
+            <p class="empty">
+                No winners yet.
+            </p>
+        `;
+
+        updateCounts();
 
         return;
     }
 
-    list.innerHTML = winners
+    list.innerHTML =
+        winners
         .slice()
         .reverse()
-        .map(entry => `
-            <div class="book-card">
-                🏆 <strong>${entry.title}</strong><br>
-                <em>${entry.date}</em>
-            </div>
-        `).join("");
+        .map(
+            entry => `
+
+        <div class="book-card">
+
+            🏆
+
+            <strong>
+                ${escapeHTML(entry.title)}
+            </strong>
+
+            <br>
+
+            <em>
+                ${escapeHTML(entry.date)}
+            </em>
+
+        </div>
+
+    `).join("");
+
+    updateCounts();
 }
+
+
+/*
+==================================================
+ADD BOOK
+==================================================
+*/
 
 function addBook() {
 
@@ -276,97 +599,250 @@ function addBook() {
     const title =
         input.value.trim();
 
-    if (!title) return;
+    if (!title) {
+        return;
+    }
+
+    // Prevent duplicate books
+    if (
+        books.includes(title) ||
+        voteCandidates.includes(title) ||
+        winners.some(
+            winner => winner.title === title
+        )
+    ) {
+
+        alert(
+            "That book is already on the list!"
+        );
+
+        return;
+    }
 
     books.push(title);
 
     saveData();
+
     renderBooks();
 
     input.value = "";
 }
+
+
+/*
+==================================================
+REMOVE BOOK
+==================================================
+*/
 
 function removeBook(index) {
 
     books.splice(index, 1);
 
     saveData();
+
     renderBooks();
-    updateCounts();
 }
+
+
+/*
+==================================================
+ROLL THREE BOOKS
+==================================================
+*/
 
 function rollBooks() {
 
-    const container =
-        document.getElementById("rolledBooks");
-
     if (books.length < 3) {
 
-        container.innerHTML =
-            '<p class="empty">Need at least 3 books.</p>';
+        alert(
+            "You need at least 3 books in the pool to roll!"
+        );
 
         return;
     }
 
-    const shuffled =
-        [...books].sort(() => Math.random() - 0.5);
+    /*
+    Create a shuffled copy of the book pool.
+    This does NOT change the actual book pool.
+    */
 
-    const selected =
+    const shuffled =
+        [...books].sort(
+            () => Math.random() - 0.5
+        );
+
+    /*
+    Pick exactly three.
+    */
+
+    voteCandidates =
         shuffled.slice(0, 3);
 
-    container.innerHTML = selected.map(book => `
-        <div class="book-card">
-            <strong>${book}</strong><br>
-
-            <button
-                class="small-btn"
-                onclick="markWinner('${book.replace(/'/g, "\\'")}')">
-                Mark as Winner
-            </button>
-        </div>
-    `).join("");
-}
-
-function markWinner(book) {
-
-    books =
-        books.filter(b => b !== book);
-
-    const now =
-        new Date();
-
-    const date =
-        now.toLocaleString('default', {
-            month: 'long',
-            year: 'numeric'
-        });
-
-    const winnerEntry = {
-        title: book,
-        date: date
-    };
-
-    winners.push(winnerEntry);
-
-    bookOfMonth = winnerEntry;
+    /*
+    Save the candidates!
+    */
 
     saveData();
 
-    renderBooks();
-    renderWinners();
-    renderBookOfMonth();
-    updateCounts();
-
-    document.getElementById("rolledBooks").innerHTML =
-        '<p class="empty">Winner selected! See you next month.</p>';
+    renderVoteCandidates();
 }
 
+
+/*
+==================================================
+MARK WINNER
+==================================================
+*/
+
+function markWinner(candidateIndex) {
+
+    const winningBook =
+        voteCandidates[candidateIndex];
+
+    if (!winningBook) {
+        return;
+    }
+
+    /*
+    Remove the winning book
+    from the main pool.
+    */
+
+    books =
+        books.filter(
+            book => book !== winningBook
+        );
+
+
+    /*
+    Get current month and year.
+    */
+
+    const now = new Date();
+
+    const date =
+        now.toLocaleString(
+            "default",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+
+    /*
+    Create winner record.
+    */
+
+    const winnerEntry = {
+
+        title: winningBook,
+
+        date: date
+    };
+
+
+    /*
+    Add to previous winners.
+    */
+
+    winners.push(winnerEntry);
+
+
+    /*
+    Make it the new Book of the Month.
+    */
+
+    bookOfMonth =
+        winnerEntry;
+
+
+    /*
+    Clear the three candidates.
+    */
+
+    voteCandidates = [];
+
+
+    /*
+    Save EVERYTHING.
+    */
+
+    saveData();
+
+
+    /*
+    Update the page.
+    */
+
+    renderBooks();
+
+    renderWinners();
+
+    renderVoteCandidates();
+
+    renderBookOfMonth();
+
+    updateCounts();
+}
+
+
+/*
+==================================================
+ESCAPE TEXT
+==================================================
+
+Prevents book titles containing characters
+like < or > from being interpreted as HTML.
+*/
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+}
+
+
+/*
+==================================================
+STARTUP
+==================================================
+
+Load everything from localStorage when
+the website opens.
+==================================================
+*/
+
 renderBooks();
+
 renderWinners();
+
+renderVoteCandidates();
+
 renderBookOfMonth();
+
 updateCounts();
 
 </script>
 
 </body>
 </html>
+```
+
+The important bit is that there is now a **fourth piece of saved information**:
+
+`voteCandidates`
+
+So your browser is remembering:
+
+**📚 Book Pool** → all books available
+**🎲 Vote Candidates** → the current 3 being voted on
+**🏆 Previous Winners** → everything that's already won
+**📖 Book of the Month** → the most recent winner
+
+And if you close the browser halfway through your voting process, come back tomorrow, and open the file again... **your three candidates will still be sitting there waiting for you.** 😭📚
